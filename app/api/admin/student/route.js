@@ -4,6 +4,7 @@ import { connectDB } from "../../../../lib/mongo.js";
 import Student from "../../../../Model/Student.js";
 import Payment from "../../../../Model/Payment.js";
 import StudentFee from "@/Model/StudentFee.js";
+import { success } from "zod";
 
 //to create a new student by admin
 export async function POST(req) {
@@ -73,7 +74,9 @@ export async function DELETE(req) {
       );
     }
     // session.startTransaction();
-    const student = await Student.findOne({ rollNo });  /* Student.findOne({ rollNo }).session(session);  for production on mongo atlas*/
+    const student = await Student.findOne({
+      rollNo,
+    }); /* Student.findOne({ rollNo }).session(session);  for production on mongo atlas*/
     if (!student) {
       return NextResponse.json(
         { message: "Student not found", success: false },
@@ -101,3 +104,7 @@ export async function DELETE(req) {
     );
   }
 }
+
+
+
+
