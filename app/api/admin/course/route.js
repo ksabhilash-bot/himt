@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import Course from "@/Model/Course";
 import { connectDB } from "@/lib/mongo";
-import { success } from "zod";
 
 export async function POST(req) {
   try {
