@@ -17,6 +17,7 @@ const StudentFeeSchema = new mongoose.Schema(
     semester: {
       type: Number,
       required: true,
+      default: 1,
     },
 
     sessionStartYear: {
@@ -24,7 +25,7 @@ const StudentFeeSchema = new mongoose.Schema(
       required: true,
     },
 
-    totalFees: {
+    SemesterFees: {
       type: Number,
       required: true,
     },

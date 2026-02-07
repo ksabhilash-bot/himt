@@ -5,6 +5,7 @@ import Student from "../../../../Model/Student.js";
 import Payment from "../../../../Model/Payment.js";
 import StudentFee from "@/Model/StudentFee.js";
 import { cookieAdmin } from "@/lib/verifyCookie.js";
+import SemesterFee from "@/Model/SemesterFee.js";
 
 //to create a new student by admin
 export async function POST(req) {
@@ -47,6 +48,20 @@ export async function POST(req) {
       sessionEndYear,
     });
     await student.save();
+
+    const courseCurrentFee = await SemesterFee.findOne({
+      courseCode,
+      semester: 1,
+    });
+
+    const studentNewFee = new StudentFee({
+      studentId: student._id,
+      courseCode,
+      semester: 1,
+      sessionStartYear,
+      SemesterFees: courseCurrentFee.totalFees,
+    });
+    await studentNewFee.save();
     return NextResponse.json(
       { message: "Student created successfully", success: true },
       { status: 201 },
@@ -76,16 +91,17 @@ export async function DELETE(req) {
     await cookieAdmin(req);
     await connectDB();
 
-    const { rollNo } = await req.json();
-    if (rollNo === "") {
+    const { rollNo, email } = await req.json();
+    if (rollNo === "" || email === "") {
       return NextResponse.json(
-        { message: "Please fill rollNo", success: false },
+        { message: "Please fill rollNo and email", success: false },
         { status: 401 },
       );
     }
     // session.startTransaction();
     const student = await Student.findOne({
       rollNo,
+      email,
     }); /* Student.findOne({ rollNo }).session(session);  for production on mongo atlas*/
     if (!student) {
       return NextResponse.json(
