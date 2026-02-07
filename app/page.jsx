@@ -29,7 +29,7 @@ export default function Home() {
 
           <Link
             size="lg"
-            href={"/student/login"}
+            href={"/login"}
             className="rounded-full px-8 text-amber-50 p-2 bg-zinc-950 hover:text-zinc-950 hover:font-bold hover:bg-zinc-300 "
           >
             Student Login

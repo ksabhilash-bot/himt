@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Course from "@/Model/Course";
 import { connectDB } from "@/lib/mongo";
+import { cookieAdmin } from "@/lib/verifyCookie";
 
 export async function POST(req) {
   try {
@@ -50,6 +51,7 @@ export async function POST(req) {
 //to delete a course
 export async function DELETE(req) {
   try {
+    await cookieAdmin(req);
     await connectDB();
     const { courseCode } = await req.json();
     if (!courseCode) {
@@ -75,6 +77,28 @@ export async function DELETE(req) {
     );
   } catch (error) {
     console.log("Error while deleting course", error);
+    return NextResponse.json(
+      { message: "Server side Error", success: false },
+      { status: 500 },
+    );
+  }
+}
+
+//to get all courses
+export async function GET() {
+  try {
+    await connectDB();
+    const courses = await Course.find({}).sort({ courseCode: 1 });
+    if (!courses.length) {
+      return NextResponse.json(
+        { message: "No courses found", success: false },
+        { status: 200 },
+      );
+    }
+
+    return NextResponse.json({ success: true, courses }, { status: 200 });
+  } catch (error) {
+    console.log("Error while fetching courses", error);
     return NextResponse.json(
       { message: "Server side Error", success: false },
       { status: 500 },

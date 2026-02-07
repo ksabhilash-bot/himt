@@ -4,11 +4,13 @@ import { connectDB } from "../../../../lib/mongo.js";
 import Student from "../../../../Model/Student.js";
 import Payment from "../../../../Model/Payment.js";
 import StudentFee from "@/Model/StudentFee.js";
-import { success } from "zod";
+import { cookieAdmin } from "@/lib/verifyCookie.js";
+
 
 //to create a new student by admin
 export async function POST(req) {
   try {
+    await cookieAdmin(req);
     await connectDB();
     const {
       email,
@@ -51,6 +53,15 @@ export async function POST(req) {
       { status: 201 },
     );
   } catch (error) {
+    if (error.code === 11000) {
+      return NextResponse.json(
+        {
+          message: "Roll number already exists",
+          success: false,
+        },
+        { status: 409 }, // Conflict
+      );
+    }
     console.error("Error creating student:", error);
     return NextResponse.json(
       { message: "Failed to create student", success: false },
@@ -64,6 +75,7 @@ export async function POST(req) {
 export async function DELETE(req) {
   // const session = await mongoose.startSession();
   try {
+    await cookieAdmin(req);
     await connectDB();
 
     const { rollNo } = await req.json();
@@ -105,6 +117,93 @@ export async function DELETE(req) {
   }
 }
 
+//to delete a student by admin from courseCode and sessionStartYear and sessionEndYear
 
+export async function PUT(req) {
+  try {
+    await cookieAdmin(req);
+    await connectDB();
+    const { courseCode, sessionStartYear, sessionEndYear } = await req.json();
+    if (courseCode === "" || sessionStartYear === "" || sessionEndYear === "") {
+      return NextResponse.json(
+        { message: "All fields are required", success: false },
+        { status: 401 },
+      );
+    }
+    const students = await Student.find({
+      courseCode,
+      sessionStartYear,
+      sessionEndYear,
+    });
+    if (students.length === 0) {
+      return NextResponse.json(
+        { message: "No students found", success: false },
+        { status: 404 },
+      );
+    }
+    const studentIds = students.map((student) => student._id);
+    await Student.deleteMany({
+      _id: { $in: studentIds },
+    });
+    await Payment.deleteMany({ studentId: { $in: studentIds } });
+    await StudentFee.deleteMany({ studentId: { $in: studentIds } });
+    return NextResponse.json(
+      { message: "Students deleted successfully", success: true },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error deleting students:", error);
+    return NextResponse.json(
+      { message: "Failed to delete students", success: false },
+      { status: 500 },
+    );
+  }
+}
 
+//to get student details by courseCode and sessionStartYear and sessionEndYear
 
+export async function GET(req) {
+  try {
+    await cookieAdmin(req);
+    await connectDB();
+    const { searchParams } = new URL(req.url);
+    const courseCode = searchParams.get("courseCode");
+    const sessionStartYear = parseInt(searchParams.get("sessionStartYear"));
+    const sessionEndYear = parseInt(searchParams.get("sessionEndYear"));
+
+    if (
+      courseCode === "" ||
+      !courseCode ||
+      isNaN(sessionStartYear) ||
+      isNaN(sessionEndYear)
+    ) {
+      return NextResponse.json(
+        { message: "Invalid input parameters", success: false },
+        { status: 400 },
+      );
+    }
+
+    const students = await Student.find({
+      courseCode,
+      sessionStartYear,
+      sessionEndYear,
+    }).sort({ rollNo: 1 });
+
+    if (students.length === 0) {
+      return NextResponse.json(
+        { message: "No students found", success: false },
+        { status: 200 },
+      );
+    }
+    return NextResponse.json(
+      { message: "Students fetched successfully", success: true, students },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch students", success: false },
+      { status: 500 },
+    );
+  }
+}

@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import SemesterFee from "@/Model/SemesterFee";
 import { connectDB } from "@/lib/mongo";
+import { cookieAdmin } from "@/lib/verifyCookie";
 
 //to create a new semester fee record
 export async function POST(req) {
   try {
+    await cookieAdmin(req);
     await connectDB();
     const { courseCode, semester, totalFees } = await req.json();
     if (!courseCode || !semester || !totalFees) {
@@ -58,6 +60,7 @@ export async function POST(req) {
 
 export async function DELETE(req) {
   try {
+    await cookieAdmin(req);
     await connectDB();
 
     const { courseCode, semester } = await req.json();
@@ -100,6 +103,7 @@ export async function DELETE(req) {
 //to update semester fee record
 export async function PUT(req) {
   try {
+    await cookieAdmin(req);
     await connectDB();
     const { courseCode, semester, totalFees } = await req.json();
 

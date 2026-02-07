@@ -3,10 +3,12 @@ import { connectDB } from "@/lib/mongo";
 import Student from "@/Model/Student";
 import Payment from "@/Model/Payment";
 import StudentFee from "@/Model/StudentFee";
+import { cookieAdmin } from "@/lib/verifyCookie";
 
 //to get student details along with payments and fees by rollNo
 export async function GET(req, { params }) {
   try {
+    await cookieAdmin(req);
     await connectDB();
     const { rollNo } = await params;
     if (rollNo === "" || !rollNo) {
@@ -59,6 +61,7 @@ export async function GET(req, { params }) {
 export async function PUT(req,{params})
 {
     try {
+      await cookieAdmin(req);
         await connectDB();
         const { rollNo } = await params;
         if (rollNo === "" || !rollNo) {

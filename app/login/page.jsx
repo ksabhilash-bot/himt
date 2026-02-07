@@ -19,7 +19,7 @@ import { Spinner } from "@/components/ui/spinner";
 export default function Page() {
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -45,8 +45,21 @@ export default function Page() {
 
     setLoading(true);
 
-    console.log({ email, password });
-    toast.success("Login successful!");
+    // Simulate API call
+    const loggin = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    const logginData = await loggin.json();
+    console.log("Login response:", logginData);
+    if(logginData.success) {
+      toast.success("Login successful!");
+    }else {
+      toast.error(logginData.message || "Login failed. Please try again.");
+    }
 
     setTimeout(() => {
       setLoading(false);
