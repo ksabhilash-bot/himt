@@ -6,7 +6,6 @@ import Payment from "../../../../Model/Payment.js";
 import StudentFee from "@/Model/StudentFee.js";
 import { cookieAdmin } from "@/lib/verifyCookie.js";
 
-
 //to create a new student by admin
 export async function POST(req) {
   try {
@@ -71,7 +70,6 @@ export async function POST(req) {
 }
 
 //to delete a student by admin and delete the record from other collections as well
-
 export async function DELETE(req) {
   // const session = await mongoose.startSession();
   try {
@@ -117,8 +115,7 @@ export async function DELETE(req) {
   }
 }
 
-//to delete a student by admin from courseCode and sessionStartYear and sessionEndYear
-
+//to delete students by admin from courseCode and sessionStartYear and sessionEndYear
 export async function PUT(req) {
   try {
     await cookieAdmin(req);
@@ -161,7 +158,6 @@ export async function PUT(req) {
 }
 
 //to get student details by courseCode and sessionStartYear and sessionEndYear
-
 export async function GET(req) {
   try {
     await cookieAdmin(req);

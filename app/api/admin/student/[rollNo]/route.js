@@ -57,7 +57,6 @@ export async function GET(req, { params }) {
 }
 
 //to update student details by admin
-
 export async function PUT(req,{params})
 {
     try {
