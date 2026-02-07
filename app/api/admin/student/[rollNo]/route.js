@@ -57,44 +57,97 @@ export async function GET(req, { params }) {
 }
 
 //to update student details by admin
-export async function PUT(req,{params})
-{
-    try {
-      await cookieAdmin(req);
-        await connectDB();
-        const { rollNo } = await params;
-        if (rollNo === "" || !rollNo) {
-          return NextResponse.json(
-            { message: "Please fill rollNo", success: false },
-            { status: 401 },
-          );
-        }
-
-        const studentDetail = await req.json();
-        const student = await Student.findOne({rollNo});
-        if (!student) {
-          return NextResponse.json(
-            { message: "Student not found", success: false },
-            { status: 404 },
-          );
-        }
-        const updatedStudent = await Student.findByIdAndUpdate(
-          student._id,
-          studentDetail,
-          { new: true }
-        );
-        return NextResponse.json(
-          { message: "Student details updated successfully", success: true, updatedStudent },
-          { status: 200 },
-        );
-
-    } catch (error) {
-        console.error("Error updating student details:", error);
-        return NextResponse.json(
-          { message: "Failed to update student details", success: false },
-          { status: 500 },
-        );
-        
+export async function PUT(req, { params }) {
+  try {
+    await cookieAdmin(req);
+    await connectDB();
+    const { rollNo } = await params;
+    if (rollNo === "" || !rollNo) {
+      return NextResponse.json(
+        { message: "Please fill rollNo", success: false },
+        { status: 401 },
+      );
     }
 
+    const studentDetail = await req.json();
+    const student = await Student.findOne({ rollNo });
+    if (!student) {
+      return NextResponse.json(
+        { message: "Student not found", success: false },
+        { status: 404 },
+      );
+    }
+    const updatedStudent = await Student.findByIdAndUpdate(
+      student._id,
+      studentDetail,
+      { new: true },
+    );
+    return NextResponse.json(
+      {
+        message: "Student details updated successfully",
+        success: true,
+        updatedStudent,
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error updating student details:", error);
+    return NextResponse.json(
+      { message: "Failed to update student details", success: false },
+      { status: 500 },
+    );
+  }
+}
+
+//to update student semesterFee status by admin
+export async function PATCH(req, { params }) {
+  try {
+    await cookieAdmin(req);
+    await connectDB();
+    const { rollNo } = await params;
+
+    if (rollNo === "" || !rollNo) {
+      return NextResponse.json(
+        { message: "Please fill rollNo", success: false },
+        { status: 401 },
+      );
+    }
+
+    const { semester, amountPaid, status } = await req.json();
+
+    const student = await Student.findOne({ rollNo });
+    if (!student) {
+      return NextResponse.json(
+        { message: "Student not found", success: false },
+        { status: 404 },
+      );
+    }
+
+    const studentFee = await studentFee.findOne({
+      studentId: student._id,
+      semester,
+    });
+    if (!studentFee) {
+      return NextResponse.json(
+        {
+          message: "Student fee record not found for the specified semester",
+          success: false,
+        },
+        { status: 404 },
+      );
+    }
+
+    studentFee.amountPaid = amountPaid;
+    studentFee.status = status;
+    await studentFee.save();
+  } catch (error) {
+    console.error("Error updating student semester fee status:", error);
+    return NextResponse.json(
+      {
+        message: "Failed to update student semester fee status",
+        success: false,
+      },
+      { status: 500 },
+    );
+  }
 }
