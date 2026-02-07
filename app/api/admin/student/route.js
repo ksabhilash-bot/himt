@@ -6,6 +6,7 @@ import Payment from "../../../../Model/Payment.js";
 import StudentFee from "@/Model/StudentFee.js";
 import { cookieAdmin } from "@/lib/verifyCookie.js";
 import SemesterFee from "@/Model/SemesterFee.js";
+import Course from "@/Model/Course.js";
 
 //to create a new student by admin
 export async function POST(req) {
@@ -49,19 +50,23 @@ export async function POST(req) {
     });
     await student.save();
 
-    const courseCurrentFee = await SemesterFee.findOne({
-      courseCode,
-      semester: 1,
-    });
+    const course = await Course.findOne({ courseCode });
 
-    const studentNewFee = new StudentFee({
-      studentId: student._id,
-      courseCode,
-      semester: 1,
-      sessionStartYear,
-      SemesterFees: courseCurrentFee.totalFees,
-    });
-    await studentNewFee.save();
+    for (let semester = 1; semester <= course.totalSemesters; semester++) {
+      const courseCurrentFee = await SemesterFee.findOne({
+        courseCode,
+        semester: semester,
+      });
+      const studentNewFee = new StudentFee({
+        studentId: student._id,
+        courseCode,
+        semester,
+        sessionStartYear,
+        SemesterFees: courseCurrentFee.totalFees,
+      });
+      await studentNewFee.save();
+    }
+
     return NextResponse.json(
       { message: "Student created successfully", success: true },
       { status: 201 },
