@@ -99,7 +99,7 @@ export async function PUT(req, { params }) {
   }
 }
 
-//to update student semesterFee status by admin
+//to update student semesterFee status by admin like offline payment recieved
 export async function PATCH(req, { params }) {
   try {
     await cookieAdmin(req);
