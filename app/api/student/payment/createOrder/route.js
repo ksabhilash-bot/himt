@@ -57,6 +57,9 @@ const razorpayInstance = new Razorpay({
 //     }
 
 //     const stud = await Student.findById(studentId).select("-password");
+//  if(!stud){
+// return NextResponse.json({message:"student not found!",success:false},{status:404})}
+// 
 //     if(stud.currentSemester !== semester)
 //     {
 //       return NextResponse.json({success:false,message:"cannot pay for another semester rather than current Semester"},{status:201})

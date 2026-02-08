@@ -74,16 +74,22 @@ export default function Page() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-muted p-4 sm:p-6">
-      <nav className="">
-        <div className="mx-auto max-w-5xl flex items-center justify-end py-4">
+    <div className="min-h-screen bg-muted px-2 sm:px-6 ">
+      <header className="sticky top-0 z-10 bg-background border-b mb-3">
+        <div className="mx-auto max-w-6xl flex items-center justify-between px-4 py-3">
+          <h1 className="text-lg font-semibold">Student Dashboard</h1>
           <LogoutButton />
         </div>
-      </nav>
+      </header>
+
       <div className="mx-auto max-w-5xl space-y-6">
         {/* Welcome Card */}
         <Card>
-          <CardHeader>
+          <CardHeader className={`flex flex-row items-center gap-4`}>
+            <div className="h-12 w-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-lg font-bold">
+              {user.name.charAt(0)}
+            </div>
+            <div></div>
             <CardTitle className="text-xl sm:text-2xl">
               Welcome, {user.name}
             </CardTitle>
