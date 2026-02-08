@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useDashboardStore } from "@/zustandStore/useDashboardStore";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
+import Link from "next/link";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
@@ -134,51 +135,65 @@ export default function Page() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your email and password to access your HIMT account
-          </CardDescription>
-        </CardHeader>
+    <div className="flex flex-col min-h-screen justify-center">
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle>Login to your account</CardTitle>
+            <CardDescription>
+              Enter your email and password to access your HIMT account
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={mail}
-                onChange={(e) => setMail(e.target.value)}
-                placeholder="student@gmail.com"
-              />
-            </div>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={mail}
+                  onChange={(e) => setMail(e.target.value)}
+                  placeholder="student@gmail.com"
+                />
+              </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                />
+              </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? <Spinner className="h-4 w-4 animate-spin" /> : "Login"}
-            </Button>
-          </form>
-        </CardContent>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <Spinner className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Login"
+                )}
+              </Button>
+            </form>
+          </CardContent>
 
-        <CardFooter className="text-sm text-muted-foreground text-center">
-          © HIMT Rohtak
-        </CardFooter>
-      </Card>
+          <CardFooter className="text-sm text-muted-foreground flex justify-between">
+            <span>© HIMT Rohtak</span>
+
+            <Link href={`/`}>
+              <Button
+                className={`text-white bg-zinc-950 hover:bg-transparent hover:text-black`}
+              >
+                Home
+              </Button>
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }
