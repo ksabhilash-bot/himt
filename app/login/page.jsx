@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,11 +14,66 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useDashboardStore } from "@/zustandStore/useDashboardStore";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
+  const { isAuthenticated, dashboard, setSession, clearSession } =
+    useDashboardStore();
+  const router = useRouter();
+
+  const [mail, setMail] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const hydrateSession = async () => {
+      try {
+        const res = await fetch("/api/me", {
+          credentials: "include",
+        });
+
+        const data = await res.json();
+
+        if (data.dashboard === "adminStyle") {
+          setSession({
+            user: data.user,
+            dashboard: "adminStyle",
+          });
+          router.push("/admin/dashboard");
+        }
+
+        if (!data.success) {
+          clearSession();
+          router.push("/login");
+        }
+
+        if (data.success) {
+          setSession({
+            user: data.user,
+            dashboard: data.dashboard,
+          });
+        } else {
+          clearSession();
+        }
+      } catch {
+        clearSession();
+      }
+    };
+
+    hydrateSession();
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated && dashboard) {
+      if (dashboard === "studentStyle") {
+        router.push("/student/dashboard");
+      } else if (dashboard === "adminStyle") {
+        router.push("/admin/dashboard");
+      }
+    }
+  }, [isAuthenticated, dashboard, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,12 +110,23 @@ export default function Page() {
       body: JSON.stringify({ email, password }),
     });
     const logginData = await loggin.json();
-    console.log("Login response:", logginData);
-    if(logginData.success) {
+    console.log(logginData);
+
+    if (logginData.success) {
       toast.success("Login successful!");
-    }else {
+
+      if (logginData.dashboard === "studentStyle") {
+        setSession({ user: logginData.student, dashboard: "studentStyle" });
+        router.push("/student/dashboard");
+      } else if (logginData.dashboard === "adminStyle") {
+        setSession({ user: logginData.admin, dashboard: "adminStyle" });
+        router.push("/admin/dashboard");
+      }
+    } else {
       toast.error(logginData.message || "Login failed. Please try again.");
     }
+    setMail("");
+    setPassword("");
 
     setTimeout(() => {
       setLoading(false);
@@ -84,6 +151,8 @@ export default function Page() {
                 id="email"
                 name="email"
                 type="email"
+                value={mail}
+                onChange={(e) => setMail(e.target.value)}
                 placeholder="student@gmail.com"
               />
             </div>
@@ -94,6 +163,8 @@ export default function Page() {
                 id="password"
                 name="password"
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
               />
             </div>
