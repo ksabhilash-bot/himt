@@ -117,7 +117,7 @@ export default function Page() {
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <Link href="/admin/settings">Manage Admins</Link>
+                  <Link href="/admin/adminSetting">Manage Admins</Link>
                 </Button>
               </CardContent>
             </Card>

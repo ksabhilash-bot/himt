@@ -178,7 +178,7 @@ export async function PUT(req) {
   }
 }
 
-//to get student details by courseCode and sessionStartYear and sessionEndYear
+//to get students details by courseCode and sessionStartYear and sessionEndYear
 export async function GET(req) {
   try {
     await cookieAdmin(req);
