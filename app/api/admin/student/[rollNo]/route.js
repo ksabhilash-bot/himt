@@ -58,6 +58,7 @@ export async function PUT(req, { params }) {
 
     const { rollNo } = await params;
     const studentDetail = await req.json();
+    const { isConcession } = studentDetail;
 
     const student = await Student.findOne({ rollNo });
     if (!student) {

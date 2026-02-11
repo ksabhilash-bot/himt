@@ -96,7 +96,7 @@ export default function StudentDetailsPage() {
       }
 
       const data = await res.json();
-      
+
       setStudent(data.student);
 
       setPayments(data.payments || []);
@@ -108,7 +108,8 @@ export default function StudentDetailsPage() {
           name: data.student.name || "",
           email: data.student.email || "",
           phone: data.student.phone || "",
-          isConcession: data.student.isConcession || false,
+
+          isConcession: data.student.isConcession ?? false,
         });
       }
 
@@ -303,7 +304,12 @@ export default function StudentDetailsPage() {
           <div>
             <CardTitle className="text-2xl">{student.name}</CardTitle>
             <CardDescription>Roll No: {student.rollNo}</CardDescription>
-            <CardDescription>Concession: {student.isConcession}</CardDescription>
+            <CardDescription className="flex items-center gap-2">
+              Concession:
+              <Badge variant={student.isConcession ? "success" : "secondary"}>
+                {student.isConcession ? "Yes" : "No"}
+              </Badge>
+            </CardDescription>
           </div>
           <Button
             variant="outline"
@@ -530,7 +536,7 @@ export default function StudentDetailsPage() {
 
       {/* Edit Student Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-106.25">
           <DialogHeader>
             <DialogTitle>Edit Student Details</DialogTitle>
             <DialogDescription>
@@ -538,7 +544,7 @@ export default function StudentDetailsPage() {
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdateStudent} className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label htmlFor="name" className="text-right">
                 Name
               </Label>
@@ -553,7 +559,7 @@ export default function StudentDetailsPage() {
                 required
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label htmlFor="email" className="text-right">
                 Email
               </Label>
@@ -569,7 +575,32 @@ export default function StudentDetailsPage() {
                 required
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-5 items-center gap-4">
+              <Label htmlFor="isConcession" className="text-right">
+                Concession
+              </Label>
+
+              <Select
+                value={editForm.isConcession ? "yes" : "no"}
+                onValueChange={(value) =>
+                  setEditForm({
+                    ...editForm,
+                    isConcession: value === "yes",
+                  })
+                }
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select concession status" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="yes">Yes</SelectItem>
+                  <SelectItem value="no">No</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-5 items-center gap-4">
               <Label htmlFor="phone" className="text-right">
                 Phone
               </Label>
@@ -606,7 +637,7 @@ export default function StudentDetailsPage() {
 
       {/* Update Fee Dialog */}
       <Dialog open={isFeeDialogOpen} onOpenChange={setIsFeeDialogOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-100">
           <DialogHeader>
             <DialogTitle>
               Update Semester {feeToUpdate?.semester} Fee
