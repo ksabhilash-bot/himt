@@ -5,38 +5,32 @@ import Payment from "@/Model/Payment";
 import StudentFee from "@/Model/StudentFee";
 import { cookieAdmin } from "@/lib/verifyCookie";
 
-//to get student details along with payments and fees by rollNo
+/* ---------------- GET student details ---------------- */
 export async function GET(req, { params }) {
   try {
     await cookieAdmin(req);
     await connectDB();
+
     const { rollNo } = await params;
-    if (rollNo === "" || !rollNo) {
+
+    if (!rollNo) {
       return NextResponse.json(
         { message: "Please fill rollNo", success: false },
-        { status: 401 },
+        { status: 400 },
       );
     }
-    const student = await Student.findOne({ rollNo });
 
+    const student = await Student.findOne({ rollNo });
     if (!student) {
       return NextResponse.json(
         { message: "Student not found", success: false },
         { status: 404 },
       );
     }
+
     const payments = await Payment.find({ studentId: student._id });
     const fees = await StudentFee.find({ studentId: student._id });
-    if (!payments.length && !fees.length) {
-      return NextResponse.json(
-        {
-          student,
-          message: "No payments or fees found for this student",
-          success: true,
-        },
-        { status: 200 },
-      );
-    }
+
     return NextResponse.json(
       {
         student,
@@ -56,20 +50,15 @@ export async function GET(req, { params }) {
   }
 }
 
-//to update student details by admin
+/* ---------------- UPDATE student details ---------------- */
 export async function PUT(req, { params }) {
   try {
     await cookieAdmin(req);
     await connectDB();
-    const { rollNo } = await params;
-    if (rollNo === "" || !rollNo) {
-      return NextResponse.json(
-        { message: "Please fill rollNo", success: false },
-        { status: 401 },
-      );
-    }
 
+    const { rollNo } = await params;
     const studentDetail = await req.json();
+
     const student = await Student.findOne({ rollNo });
     if (!student) {
       return NextResponse.json(
@@ -77,11 +66,18 @@ export async function PUT(req, { params }) {
         { status: 404 },
       );
     }
+
+    // prevent duplicate phone update
+    if (studentDetail.phone === student.phone) {
+      delete studentDetail.phone;
+    }
+
     const updatedStudent = await Student.findByIdAndUpdate(
       student._id,
       studentDetail,
       { new: true },
     );
+
     return NextResponse.json(
       {
         message: "Student details updated successfully",
@@ -99,20 +95,13 @@ export async function PUT(req, { params }) {
   }
 }
 
-//to update student semesterFee status by admin like offline payment recieved
+/* ---------------- UPDATE semester fee status ---------------- */
 export async function PATCH(req, { params }) {
   try {
     await cookieAdmin(req);
     await connectDB();
+
     const { rollNo } = await params;
-
-    if (rollNo === "" || !rollNo) {
-      return NextResponse.json(
-        { message: "Please fill rollNo", success: false },
-        { status: 401 },
-      );
-    }
-
     const { semester, amountPaid, status } = await req.json();
 
     const student = await Student.findOne({ rollNo });
@@ -123,10 +112,11 @@ export async function PATCH(req, { params }) {
       );
     }
 
-    const studentFee = await studentFee.findOne({
+    const studentFee = await StudentFee.findOne({
       studentId: student._id,
       semester,
     });
+
     if (!studentFee) {
       return NextResponse.json(
         {
@@ -140,6 +130,15 @@ export async function PATCH(req, { params }) {
     studentFee.amountPaid = amountPaid;
     studentFee.status = status;
     await studentFee.save();
+
+    return NextResponse.json(
+      {
+        message: "Student semester fee updated successfully",
+        success: true,
+        studentFee,
+      },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error updating student semester fee status:", error);
     return NextResponse.json(

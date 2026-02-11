@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, UserPlus, Filter, RefreshCw } from "lucide-react";
+import { Trash2, UserPlus, Filter, RefreshCw, Pencil } from "lucide-react";
 import toast from "react-hot-toast";
 import {
   Select,
@@ -164,7 +164,7 @@ export default function StudentManagementPage() {
         setStudents(data.students || []);
         toast.success(`Loaded ${data.students?.length || 0} students`);
       } else {
-        throw new Error(data.message || "Failed to fetch students");
+        toast(data.message || "Failed to fetch students");
       }
     } catch (err) {
       console.error("Fetch students error:", err);
@@ -368,6 +368,12 @@ export default function StudentManagementPage() {
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const studentEdit = (rollNo) => {
+    setLoading(true);
+    router.push(`students/${rollNo}`);
+    setLoading(false);
   };
 
   return (
@@ -666,9 +672,9 @@ export default function StudentManagementPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="min-w-30">Roll No</TableHead>
-                  <TableHead className="min-w-[150px]">Name</TableHead>
+                  <TableHead className="min-w-37.5">Name</TableHead>
                   <TableHead className="min-w-50">Email</TableHead>
-                  <TableHead className="min-w-[120px]">Phone</TableHead>
+                  <TableHead className="min-w-30">Phone</TableHead>
                   <TableHead className="min-w-25 text-center">
                     Session
                   </TableHead>
@@ -730,7 +736,7 @@ export default function StudentManagementPage() {
                           {student.sessionStartYear}-{student.sessionEndYear}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="flex justify-evenly">
                         <Button
                           variant="destructive"
                           size="sm"
@@ -746,6 +752,15 @@ export default function StudentManagementPage() {
                           {deletingRollNo === student.rollNo
                             ? "Deleting..."
                             : "Delete"}
+                        </Button>
+
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => studentEdit(student.rollNo)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                          Edit
                         </Button>
                       </TableCell>
                     </TableRow>
