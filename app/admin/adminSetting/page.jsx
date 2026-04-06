@@ -181,7 +181,7 @@ export default function AdminManagementPage() {
   };
 
   return (
-    <div className="container py-6 space-y-6">
+    <div className="container py-6 space-y-6 px-3">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Admin Management</h1>
         <p className="text-muted-foreground">

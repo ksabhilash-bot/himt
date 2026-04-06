@@ -164,7 +164,7 @@ export default function SemesterFeePage() {
   const getFeeId = (fee) => `${fee.courseCode}-${fee.semester}`;
 
   return (
-    <div className="flex flex-col mx-2 py-6 space-y-6">
+    <div className="flex flex-col mx-2 py-6 space-y-6 px-2">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
           Semester Fee Management

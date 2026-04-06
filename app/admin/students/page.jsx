@@ -356,7 +356,7 @@ export default function StudentManagementPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to delete students");
+        toast.error(data.message || "Failed to delete students");
       }
 
       toast.success("All students in batch deleted successfully");
@@ -377,7 +377,7 @@ export default function StudentManagementPage() {
   };
 
   return (
-    <div className="container py-6 space-y-6">
+    <div className=" flex flex-col space-y-8 lg:px-6 py-3 ">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">
           Student Management
