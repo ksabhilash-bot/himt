@@ -36,14 +36,21 @@ import { Trash2, ShieldCheck, Shield } from "lucide-react";
 import toast from "react-hot-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { useDashboardStore } from "@/zustandStore/useDashboardStore";
 
 export default function AdminManagementPage() {
+  const { user } = useDashboardStore();
+  const [you, setYou] = useState("");
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [deletingEmail, setDeletingEmail] = useState(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
+
+  useEffect(() => {
+    setYou(user?.email);
+  }, [user]);
 
   const [form, setForm] = useState({
     email: "",
@@ -62,13 +69,13 @@ export default function AdminManagementPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.message || "Failed to fetch admins");
+        toast.error(data.message || "Failed to fetch admins");
       }
 
       const data = await res.json();
+
       setAdmins(data.admins || []);
     } catch (err) {
-      console.error("Fetch admins error:", err);
       toast.error(err.message || "Failed to load admins");
       setAdmins([]);
     } finally {
@@ -142,7 +149,6 @@ export default function AdminManagementPage() {
       setForm({ email: "", password: "", superAdmin: false });
       fetchAdmins();
     } catch (err) {
-      console.error("Create admin error:", err);
       toast.error(err.message || "Failed to create admin");
     } finally {
       setFormLoading(false);
@@ -171,7 +177,6 @@ export default function AdminManagementPage() {
       toast.success("Admin deleted successfully");
       fetchAdmins();
     } catch (err) {
-      console.error("Delete admin error:", err);
       toast.error(err.message || "Failed to delete admin");
     } finally {
       setDeletingEmail(null);
@@ -354,9 +359,10 @@ export default function AdminManagementPage() {
                               setDeleteTarget(admin);
                               setIsDeleteDialogOpen(true);
                             }}
-                            disabled={deletingEmail === admin.email}
+                            disabled={you === admin.email ? true : false}
                             className="gap-1"
                           >
+                            
                             <Trash2 className="h-4 w-4" />
                             {deletingEmail === admin.email
                               ? "Deleting..."
@@ -396,7 +402,7 @@ export default function AdminManagementPage() {
                               <AlertDialogAction
                                 onClick={handleDelete}
                                 className="bg-destructive hover:bg-destructive/90"
-                                disabled={deletingEmail === admin.email}
+                                disabled={user?.email === admin.email}
                               >
                                 {deletingEmail === admin.email
                                   ? "Deleting..."

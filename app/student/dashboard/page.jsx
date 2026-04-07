@@ -13,6 +13,7 @@ export default function Page() {
   const { user, isAuthenticated, loading, clearSession, setSession } =
     useDashboardStore();
   const router = useRouter();
+  
 
   //hydration of session on page load
   useEffect(() => {

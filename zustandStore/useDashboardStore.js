@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export const useDashboardStore = create((set) => ({
-  user: {},
+  user: null,
   dashboard: null,
   isAuthenticated: false,
   loading: true,
