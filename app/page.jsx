@@ -214,11 +214,10 @@ export default function Home() {
           <Link
             ref={btnRef}
             href="/login"
-            className="rounded-full px-8 py-2.5 text-sm transition-all duration-200 hover:text-amber-50 hover:text-xl"
+            className="rounded-full px-8 py-2.5 text-sm transition-all duration-200 text-gray-300 hover:text-amber-50 hover:text-xl  border-s-amber-50 "
             style={{
               background: "rgba(140,100,255,0.18)",
               border: "0.5px solid rgba(160,120,255,0.4)",
-              color: "#c8b8ff",
             }}
           >
             Student Login
