@@ -4,7 +4,7 @@ import Student from "@/Model/Student";
 import { NextResponse } from "next/server";
 
 
-// GET /api/student/studentInfo
+
 export async function GET(req) {
   try {
     await connectDB();

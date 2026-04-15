@@ -1,11 +1,11 @@
 import Script from "next/script";
 export const metadata = {
-  title: "student Dashboard | HIMT",
+  title: "student Dashboard | CampusDesk",
   description:
-    "Student dashboard for Hindu Institute of Management & Technology, Rohtak",
+    "Student and college management of campusDesk, a comprehensive platform for managing student and college information, including admissions, courses, and campus activities.",
   keywords: [
-    "HIMT",
-    "Hindu Institute Rohtak",
+    "CD",
+    "CampusDesk",
     "Admin Dashboard",
     "Student Payment System",
   ],

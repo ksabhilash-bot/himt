@@ -220,7 +220,7 @@ export default function Home() {
               border: "0.5px solid rgba(160,120,255,0.4)",
             }}
           >
-            Student Login
+             Login
           </Link>
         </header>
 
